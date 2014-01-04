@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/AbstractViewAdapter.iml" filepath="$PROJECT_DIR$/AbstractViewAdapter.iml" />
+      <module fileurl="file://$PROJECT_DIR$/AbstractViewAdapterAPI/AbstractViewAdapterAPI.iml" filepath="$PROJECT_DIR$/AbstractViewAdapterAPI/AbstractViewAdapterAPI.iml" />
+      <module fileurl="file://$PROJECT_DIR$/AbstractViewAdapterCompiler/AbstractViewAdapterCompiler.iml" filepath="$PROJECT_DIR$/AbstractViewAdapterCompiler/AbstractViewAdapterCompiler.iml" />
+      <module fileurl="file://$PROJECT_DIR$/AbstractViewAdapterDemo/AbstractViewAdapterDemo.iml" filepath="$PROJECT_DIR$/AbstractViewAdapterDemo/AbstractViewAdapterDemo.iml" />
+    </modules>
+  </component>
+</project>
+
