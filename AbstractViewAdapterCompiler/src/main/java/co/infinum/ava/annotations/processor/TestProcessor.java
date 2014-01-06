@@ -40,22 +40,10 @@ public class TestProcessor extends AbstractProcessor {
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
 
-         //try {
-         //   JavaFileObject fileOne = filer.createClassFile("co/infinum/ava.FirstTest");
-
-         //   Writer writer = fileOne.openWriter();
-         //   writer.write("public class FirstTest {}");
-         //   writer.flush();
-         //   writer.close();
-
-        //} catch (IOException e) {
-        //    e.printStackTrace();
-        //}
-
         for(Element element : roundEnv.getElementsAnnotatedWith(Test.class)) {
             Annotation annotation = element.getAnnotation(Test.class);
 
-            processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "Processing annotation " + annotation.toString() + " for: " + element.getSimpleName() + "(" + element.getKind() + ")");
+            processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "Processing annotation " + annotation.toString() + " for: " + element.getSimpleName() + "(" + element.getKind() + ")");
 
             try {
                 JavaFileObject fileTwo = filer.createSourceFile("co.infinum.ava.SecondTest");

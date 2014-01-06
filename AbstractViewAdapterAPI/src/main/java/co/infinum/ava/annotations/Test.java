@@ -5,5 +5,7 @@ package co.infinum.ava.annotations;
  *
  * Created by ivan on 04/01/14.
  */
+
+
 public @interface Test {
 }
