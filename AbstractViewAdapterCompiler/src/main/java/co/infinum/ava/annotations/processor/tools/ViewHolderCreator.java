@@ -12,7 +12,7 @@ import java.util.ArrayList;
  */
 public class ViewHolderCreator {
 
-    protected static final String VIEW_HOLDER_TEMPLATE_PATH = "co/infinum/ava/templates/ViewHolderTemplate.tpl";
+    protected static final String VIEW_HOLDER_TEMPLATE_PATH = "/co/infinum/ava/templates/ViewHolderTemplate.tpl";
 
     protected static final String TEXT_FIELD_TEMPLATE = "\t\tTextView ${fieldName};\n";
 
@@ -101,7 +101,7 @@ public class ViewHolderCreator {
 
 
     protected String readTemplate() {
-        InputStreamReader reader = new InputStreamReader(ClassLoader.getSystemResourceAsStream(VIEW_HOLDER_TEMPLATE_PATH));
+        InputStreamReader reader = new InputStreamReader(this.getClass().getResourceAsStream(VIEW_HOLDER_TEMPLATE_PATH));
 
         BufferedReader bufferedReader = new BufferedReader(reader);
 
@@ -114,7 +114,10 @@ public class ViewHolderCreator {
                 }
 
                 line = bufferedReader.readLine();
-                builder.append(line);
+
+                if(line != null) {
+                    builder.append(line);
+                }
             } catch (IOException e) {
                 e.printStackTrace();
                 break;

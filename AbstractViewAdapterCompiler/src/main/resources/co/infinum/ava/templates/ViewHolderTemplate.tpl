@@ -17,34 +17,26 @@ public class ${className} extends FrameLayout implements AbstractViewHolder<${ob
 
         @Override
         public AbstractViewHolder<${objectType}> createView(Context context) {
-            return new TemplateViewHolder(context);
+            return new ${className}(context);
             }
     };
 
-        //TODO fields to hold views
-        //private ImageView xImageView;
-        //private TextView xTextView;
 ${fields}
 
     public ${className}(Context context) {
-            super(context);
+        super(context);
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        //TODO replace with proper layout
         View viewLayout = inflater.inflate(${layoutId}, this, true);
 
-        //TODO initialize views
-        //xImageView = (ImageView) viewLayout.findViewById(R.id.image);
 ${initializeView}
      }
 
     @Override
     public View updateView(${objectType} item) {
-        //TODO update with object properties
-        //xImageView.setImageBitmap(item.getIcon());
 ${updateView}
 
         return this;
-        }
-    }
+     }
+}
