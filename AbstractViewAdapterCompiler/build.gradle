@@ -1,1 +1,22 @@
+import com.sun.tools.javac.resources.compiler
+
+buildscript {
+    repositories {
+        mavenCentral()
+
+
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:0.7.+'
+    }
+}
+
 apply plugin: 'java'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile fileTree(dir: ':AbstractViewAdapterAPI/src', include: '*.java')
+}
