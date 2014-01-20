@@ -4,6 +4,7 @@ package co.infinum.ava.demo;
 import android.graphics.Bitmap;
 
 import co.infinum.ava.annotations.ListLayout;
+import co.infinum.ava.annotations.ListView;
 
 /**
  * Created by ivan on 12/17/13.
@@ -36,7 +37,7 @@ public class Account {
         this.icon = icon;
     }
 
-
+    @ListView(R.id.accountName)
     public String getName() {
         return name;
     }

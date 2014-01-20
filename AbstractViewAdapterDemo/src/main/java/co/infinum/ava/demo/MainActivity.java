@@ -9,10 +9,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import co.infinum.ava.annotations.Test;
+import co.infinum.ava.AbstractViewAdapter;
+import co.infinum.ava.annotations.InjectList;
 
-@Test
 public class MainActivity extends ActionBarActivity {
+
+    @InjectList(R.id.list)
+    AbstractViewAdapter<Account> abstractViewAdapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

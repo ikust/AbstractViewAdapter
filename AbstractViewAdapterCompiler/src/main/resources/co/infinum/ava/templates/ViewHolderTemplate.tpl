@@ -4,11 +4,13 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.TextView;
+import android.widget.ImageView;
 
 import co.infinum.ava.AbstractViewHolder;
 
 /**
- * Created by ivan on 06/01/14.
+ * Do not modify this class it has been generated with AbstractViewAdapter library.
  */
 public class ${className} extends FrameLayout implements AbstractViewHolder<${objectType}> {
 
@@ -22,7 +24,6 @@ public class ${className} extends FrameLayout implements AbstractViewHolder<${ob
     };
 
 ${fields}
-
     public ${className}(Context context) {
         super(context);
 
@@ -36,7 +37,6 @@ ${initializeView}
     @Override
     public View updateView(${objectType} item) {
 ${updateView}
-
         return this;
      }
 }

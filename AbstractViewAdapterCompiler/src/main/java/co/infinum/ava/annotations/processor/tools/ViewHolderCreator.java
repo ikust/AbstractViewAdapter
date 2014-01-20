@@ -1,8 +1,5 @@
 package co.infinum.ava.annotations.processor.tools;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 /**
@@ -14,17 +11,17 @@ public class ViewHolderCreator {
 
     protected static final String VIEW_HOLDER_TEMPLATE_PATH = "/co/infinum/ava/templates/ViewHolderTemplate.tpl";
 
-    protected static final String TEXT_FIELD_TEMPLATE = "\t\tTextView ${fieldName};\n";
+    protected static final String TEXT_FIELD_TEMPLATE = "\tTextView ${fieldName};\n";
 
-    protected static final String IMAGE_FIELD_TEMPLATE = "\t\tImageView ${fieldName};\n";
+    protected static final String IMAGE_FIELD_TEMPLATE = "\tImageView ${fieldName};\n";
 
     protected static final String TEXT_FIELD_INIT_TEMPLATE = "\t\t${fieldName} = (TextView) viewLayout.findViewById(${viewResId});\n";
 
     protected static final String IMAGE_FIELD_INIT_TEMPLATE = "\t\t${fieldName} = (ImageView) viewLayout.findViewById(${viewResId});\n";
 
-    protected static final String TEXT_FIELD_UPDATE_TEMPLATE = "\t\t${fieldName}.setText(item.${objectMethodName});\n";
+    protected static final String TEXT_FIELD_UPDATE_TEMPLATE = "\t\t${fieldName}.setText(item.${objectMethodName}());\n";
 
-    protected static final String IMAGE_FIELD_UPDATE_TEMPLATE = "\t\t${fieldName}.setImageBitmap(item.${objectMethodName});\n";
+    protected static final String IMAGE_FIELD_UPDATE_TEMPLATE = "\t\t${fieldName}.setImageBitmap(item.${objectMethodName}());\n";
 
 
     protected static final String PACKAGE_NAME = "${packageName}";
@@ -99,33 +96,6 @@ public class ViewHolderCreator {
         this.layoutId = layoutId;
     }
 
-
-    protected String readTemplate() {
-        InputStreamReader reader = new InputStreamReader(this.getClass().getResourceAsStream(VIEW_HOLDER_TEMPLATE_PATH));
-
-        BufferedReader bufferedReader = new BufferedReader(reader);
-
-        StringBuilder builder = new StringBuilder();
-        String line = null;
-        do {
-            try {
-                if(line != null) {
-                    builder.append("\n");
-                }
-
-                line = bufferedReader.readLine();
-
-                if(line != null) {
-                    builder.append(line);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-                break;
-            }
-        } while(line != null);
-
-        return builder.toString();
-    }
 
     /**
      * Generates fields part of the template.
@@ -205,7 +175,7 @@ public class ViewHolderCreator {
     }
 
     public String createViewHolderImplementation() {
-        String template = readTemplate();
+        String template = Templates.getInstance().read(VIEW_HOLDER_TEMPLATE_PATH);
 
         template = template.replace(PACKAGE_NAME, packageName);
         template = template.replace(CLASS_NAME, className);

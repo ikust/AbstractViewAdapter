@@ -5,6 +5,14 @@
       <GradleProjectSettings>
         <option name="distributionType" value="DEFAULT_WRAPPED" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/AbstractViewAdapterAPI" />
+            <option value="$PROJECT_DIR$/AbstractViewAdapterCompiler" />
+            <option value="$PROJECT_DIR$/AbstractViewAdapterDemo" />
+          </set>
+        </option>
       </GradleProjectSettings>
     </option>
   </component>

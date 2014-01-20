@@ -1,5 +1,3 @@
-import com.sun.tools.javac.resources.compiler
-
 buildscript {
     repositories {
         mavenCentral()
@@ -17,6 +15,17 @@ repositories {
     mavenCentral()
 }
 
+
+sourceSets {
+    main {
+        java {
+            srcDirs =  ['src/main/java', '../AbstractViewAdapterAPI/src/main/java']
+            exclude 'co/infinum/ava/AbstractView*.java'
+        }
+
+    }
+}
+
 dependencies {
-    compile fileTree(dir: ':AbstractViewAdapterAPI/src', include: '*.java')
+
 }

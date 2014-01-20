@@ -14,21 +14,33 @@ import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.ElementKind;
+import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.VariableElement;
 import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
 
+import co.infinum.ava.annotations.InjectList;
 import co.infinum.ava.annotations.ListLayout;
+import co.infinum.ava.annotations.ListView;
+import co.infinum.ava.annotations.processor.tools.AdapterInjectorCreator;
 import co.infinum.ava.annotations.processor.tools.ViewHolderCreator;
+import co.infinum.ava.annotations.processor.tools.ViewHolderFieldType;
 
 /**
  * Created by ivan on 06/01/14.
  */
-@SupportedAnnotationTypes({"co.infinum.ava.annotations.InjectAdapter", "co.infinum.ava.annotations.ListLayout", "co.infinum.ava.annotations.ListView"})
+@SupportedAnnotationTypes({"co.infinum.ava.annotations.InjectList", "co.infinum.ava.annotations.ListLayout", "co.infinum.ava.annotations.ListView"})
 @SupportedSourceVersion(SourceVersion.RELEASE_7)
 public class AbstractViewAdapterProcessor extends AbstractProcessor {
 
     protected static final String CLASS_NAME_SUFIX = "$ViewHolder";
+
+    protected static final String STRING_TYPE = "java.lang.String";
+
+    protected static final String BITMAP_TYPE = "android.graphics.Bitmap";
 
     /**
      * Used to generate source files.
@@ -45,7 +57,7 @@ public class AbstractViewAdapterProcessor extends AbstractProcessor {
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
         Map<String, ViewHolderCreator> adapterMap = findAndParseTargets(roundEnv);
-
+        Map<String, AdapterInjectorCreator> adapterInjectorMap = findAndParseInjectors(roundEnv);
 
         generateAdapterSourceFiles(adapterMap);
 
@@ -55,8 +67,9 @@ public class AbstractViewAdapterProcessor extends AbstractProcessor {
     private Map<String, ViewHolderCreator> findAndParseTargets(RoundEnvironment env) {
         Map<String, ViewHolderCreator> adapterMap = new HashMap<String, ViewHolderCreator>();
 
-        for(Element element : env.getElementsAnnotatedWith(ListLayout.class)) {
+        for (Element element : env.getElementsAnnotatedWith(ListLayout.class)) {
             TypeElement type = (TypeElement) element;
+
 
             String simpleName = type.getSimpleName().toString();
             String objectType = type.getQualifiedName().toString();
@@ -79,19 +92,83 @@ public class AbstractViewAdapterProcessor extends AbstractProcessor {
             adapterMap.put(className, creator);
         }
 
+        for (Element element : env.getElementsAnnotatedWith(ListView.class)) {
+            if(element.getKind() != ElementKind.METHOD) {
+                //TODO throw exception
+            }
+
+            ExecutableElement type = (ExecutableElement) element;
+
+            String methodName = type.getSimpleName().toString();
+            String returnType = type.getReturnType().toString();
+
+            processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "Element: " + element.getClass());
+            processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "ReturnType: " + returnType);
+
+            TypeElement parentType = (TypeElement) element.getEnclosingElement();
+            String className = parentType.getQualifiedName() + CLASS_NAME_SUFIX;
+
+            ListView annotation = element.getAnnotation(ListView.class);
+            int viewResId = annotation.value();
+
+            processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "MethodName: " + methodName);
+
+            ViewHolderCreator creator = adapterMap.get(className);
+
+            if(creator == null) {
+                //TODO throw exception
+                processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "no class creator defined");
+            }
+
+            switch(returnType) {
+                case STRING_TYPE:
+                    creator.addField(ViewHolderFieldType.TEXT, viewResId, methodName);
+                    break;
+                case BITMAP_TYPE:
+                    creator.addField(ViewHolderFieldType.IMAGE, viewResId, methodName);
+                    break;
+                default:
+                    //TODO throw exception, unsupported return type
+            }
+
+        }
+
         return adapterMap;
+    }
+
+    private Map<String, AdapterInjectorCreator> findAndParseInjectors(RoundEnvironment env) {
+        Map<String, AdapterInjectorCreator> adapterInjectorMap = new HashMap<>();
+
+        for (Element element : env.getElementsAnnotatedWith(InjectList.class)) {
+
+            processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "Inject element: " + element.toString());
+            processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "Kind: " + element.getKind());
+
+            VariableElement variableElement = (VariableElement) element;
+
+            if(element.getKind() != ElementKind.FIELD) {
+                processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "Element '" + element + "' is not a FIELD.");
+            }
+
+            if(element.getModifiers().contains(Modifier.PROTECTED) ||
+                    element.getModifiers().contains(Modifier.PRIVATE)) {
+                processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "Element '" + element + "' is declared PROTECTED or PRIVATE. Fields annotated with @InjectView can't be declared PROTECTED or PRIVATE");
+            }
+        }
+
+        return adapterInjectorMap;
     }
 
     private void parseListLayout(Element element, Map<String, ViewHolderCreator> adapterMap) {
 
     }
 
-    private void parseInjectAdapter() {
+    private void parseInjectAdapter(RoundEnvironment env) {
 
     }
 
     private void generateAdapterSourceFiles(Map<String, ViewHolderCreator> adapterMap) {
-        for(String className : adapterMap.keySet()) {
+        for (String className : adapterMap.keySet()) {
             try {
                 processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "Processing class: " + className);
 
@@ -105,5 +182,23 @@ public class AbstractViewAdapterProcessor extends AbstractProcessor {
                 e.printStackTrace();
             }
         }
+    }
+
+    private void generateAdapterInjectorSourceFiles(Map<String, AdapterInjectorCreator> adapterInjectorMap) {
+        for(String className : adapterInjectorMap.keySet()) {
+            try {
+                processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "Processing injector: " + className);
+
+                JavaFileObject adapterInjectorSource = filer.createSourceFile(className);
+
+                Writer writer = adapterInjectorSource.openWriter();
+                writer.write(adapterInjectorMap.get(className).createInjectAdapterImplementation());
+                writer.flush();
+                writer.close();
+            } catch(IOException e) {
+                e.printStackTrace();;
+            }
+        }
+
     }
 }
