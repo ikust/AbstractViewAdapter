@@ -18,7 +18,6 @@ import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
-import javax.lang.model.element.VariableElement;
 import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
 
@@ -26,6 +25,7 @@ import co.infinum.ava.annotations.InjectList;
 import co.infinum.ava.annotations.ListLayout;
 import co.infinum.ava.annotations.ListView;
 import co.infinum.ava.annotations.processor.tools.AdapterInjectorCreator;
+import co.infinum.ava.annotations.processor.tools.JavaLangUtils;
 import co.infinum.ava.annotations.processor.tools.ViewHolderCreator;
 import co.infinum.ava.annotations.processor.tools.ViewHolderFieldType;
 
@@ -36,7 +36,9 @@ import co.infinum.ava.annotations.processor.tools.ViewHolderFieldType;
 @SupportedSourceVersion(SourceVersion.RELEASE_7)
 public class AbstractViewAdapterProcessor extends AbstractProcessor {
 
-    protected static final String CLASS_NAME_SUFIX = "$ViewHolder";
+    protected static final String CLASS_NAME_SUFIX = "$$ViewHolder";
+
+    protected static final String INJECTOR_CLASS_NAME_SUFIX = "$$AdapterInjector";
 
     protected static final String STRING_TYPE = "java.lang.String";
 
@@ -60,7 +62,7 @@ public class AbstractViewAdapterProcessor extends AbstractProcessor {
         Map<String, AdapterInjectorCreator> adapterInjectorMap = findAndParseInjectors(roundEnv);
 
         generateAdapterSourceFiles(adapterMap);
-
+        generateAdapterInjectorSourceFiles(adapterInjectorMap);
         return true;
     }
 
@@ -141,19 +143,36 @@ public class AbstractViewAdapterProcessor extends AbstractProcessor {
 
         for (Element element : env.getElementsAnnotatedWith(InjectList.class)) {
 
-            processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "Inject element: " + element.toString());
-            processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "Kind: " + element.getKind());
-
-            VariableElement variableElement = (VariableElement) element;
-
             if(element.getKind() != ElementKind.FIELD) {
-                processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "Element '" + element + "' is not a FIELD.");
+                processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "Element '" + element.toString() + "' is not a FIELD.");
             }
 
             if(element.getModifiers().contains(Modifier.PROTECTED) ||
                     element.getModifiers().contains(Modifier.PRIVATE)) {
                 processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "Element '" + element + "' is declared PROTECTED or PRIVATE. Fields annotated with @InjectView can't be declared PROTECTED or PRIVATE");
             }
+
+            Element parentClass = element.getEnclosingElement();
+
+            String parentClassName = parentClass.toString(); //parent class of the field
+            String injectorClassName = parentClassName + INJECTOR_CLASS_NAME_SUFIX;
+
+
+            if(!adapterInjectorMap.containsKey(injectorClassName)) {
+                String injectorClassSimpleName = parentClass.getSimpleName().toString() + INJECTOR_CLASS_NAME_SUFIX;
+
+                AdapterInjectorCreator injectorCreator = new AdapterInjectorCreator();
+                injectorCreator.setPackageName(JavaLangUtils.getPackage(parentClass));
+                injectorCreator.setClassName(injectorClassSimpleName);
+                injectorCreator.setAdapterClassName(parentClassName);
+                adapterInjectorMap.put(injectorClassName, injectorCreator);
+            }
+
+            String adapterFieldName = element.toString();
+            String objectType = JavaLangUtils.getGenericType(element);
+
+            AdapterInjectorCreator injectorCreator = adapterInjectorMap.get(injectorClassName);
+            injectorCreator.addInjection(adapterFieldName, objectType + CLASS_NAME_SUFIX, objectType);
         }
 
         return adapterInjectorMap;

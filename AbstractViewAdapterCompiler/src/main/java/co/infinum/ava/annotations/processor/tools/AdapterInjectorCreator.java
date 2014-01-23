@@ -14,11 +14,13 @@ public class AdapterInjectorCreator {
 
     protected static final String ADAPTER_INJECTOR_TEMPLATE_PATH = "/co/infinum/ava/templates/AdapterInjectorTemplate.tpl";
 
-    protected static final String INJECTION_TEMPLATE = "\t\t${fieldName} = new AbstractViewAdapter(activity, ${viewHolderName}.FACTORY, new ArrayList<${objectType}>());\n";
+    protected static final String INJECTION_TEMPLATE = "\t\tactivity.${fieldName} = new AbstractViewAdapter(activity, ${viewHolderName}.FACTORY, new ArrayList<${objectType}>());\n";
 
     protected static final String PACKAGE_NAME = "${packageName}";
 
     protected static final String CLASS_NAME = "${className}";
+
+    protected static final String ADAPTER_CLASS_NAME = "${adapterClassName}";
 
     protected static final String INJECTION_CODE = "${injectionCode}";
 
@@ -29,19 +31,22 @@ public class AdapterInjectorCreator {
     protected static final String OBJECT_TYPE = "${objectType}";
 
 
-
     /**
      * Package for the generated injector class.
      */
     protected String packageName;
 
     /**
+     * Name of the injector class.
+     */
+    protected String className;
+
+    /**
      * Name of the class that contains adapter field that will be injected with generated adapter.
      * It is important to note that this is not the name of the injector class (but the name of the
      * "host")
      */
-    protected String className;
-
+    protected String adapterClassName;
 
     protected ArrayList<AdapterInjection> injections = new ArrayList<AdapterInjection>();
 
@@ -64,6 +69,10 @@ public class AdapterInjectorCreator {
     public void setClassName(String className) {
         this.className = className;
     }
+
+    public String getAdapterClassName() { return adapterClassName; }
+
+    public void setAdapterClassName(String adapterClassName) { this.adapterClassName = adapterClassName; }
 
     public void addInjection(String fieldName, String viewHolderName, String objectType) {
         injections.add(new AdapterInjection(fieldName, viewHolderName, objectType));
@@ -89,6 +98,7 @@ public class AdapterInjectorCreator {
 
         template = template.replace(PACKAGE_NAME, packageName);
         template = template.replace(CLASS_NAME, className);
+        template = template.replace(ADAPTER_CLASS_NAME, adapterClassName);
 
         template = template.replace(INJECTION_CODE, generateInjections());
 
