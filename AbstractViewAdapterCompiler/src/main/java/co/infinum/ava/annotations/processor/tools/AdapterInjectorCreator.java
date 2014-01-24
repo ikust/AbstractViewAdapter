@@ -5,16 +5,18 @@ import java.util.ArrayList;
 /**
  * This class is used to create helper class that will contain a method for "injecting" generated
  * ViewHolder implementations to fields in activities.
- *
+ * <p/>
  * TODO: dodat podršku i za fragmente - na isti način kao butterknife
- *
+ * <p/>
  * Created by ivan on 13/01/14.
  */
 public class AdapterInjectorCreator {
 
     protected static final String ADAPTER_INJECTOR_TEMPLATE_PATH = "/co/infinum/ava/templates/AdapterInjectorTemplate.tpl";
 
-    protected static final String INJECTION_TEMPLATE = "\t\tactivity.${fieldName} = new AbstractViewAdapter(activity, ${viewHolderName}.FACTORY, new ArrayList<${objectType}>());\n";
+    protected static final String INJECTION_TEMPLATE = "\t\tactivity.${fieldName} = new AbstractViewAdapter(activity, ${viewHolderName}.FACTORY, new ArrayList<${objectType}>());\n" +
+            "\t\tListView ${listViewName} = (ListView) activity.findViewById(${listViewId});\n" +
+            "\t\t${listViewName}.setAdapter(activity.${fieldName});\n";
 
     protected static final String PACKAGE_NAME = "${packageName}";
 
@@ -29,6 +31,12 @@ public class AdapterInjectorCreator {
     protected static final String VIEW_HOLDER_NAME = "${viewHolderName}";
 
     protected static final String OBJECT_TYPE = "${objectType}";
+
+    protected static final String LIST_VIEW_NAME = "${listViewName}";
+
+    protected static final String LIST_VIEW_ID = "${listViewId}";
+
+    protected static final String LIST_VIEW_SUFIX = "ListView";
 
 
     /**
@@ -47,6 +55,8 @@ public class AdapterInjectorCreator {
      * "host")
      */
     protected String adapterClassName;
+
+    protected int listViewId;
 
     protected ArrayList<AdapterInjection> injections = new ArrayList<AdapterInjection>();
 
@@ -70,28 +80,35 @@ public class AdapterInjectorCreator {
         this.className = className;
     }
 
-    public String getAdapterClassName() { return adapterClassName; }
+    public String getAdapterClassName() {
+        return adapterClassName;
+    }
 
-    public void setAdapterClassName(String adapterClassName) { this.adapterClassName = adapterClassName; }
+    public void setAdapterClassName(String adapterClassName) {
+        this.adapterClassName = adapterClassName;
+    }
 
-    public void addInjection(String fieldName, String viewHolderName, String objectType) {
-        injections.add(new AdapterInjection(fieldName, viewHolderName, objectType));
+    public void addInjection(String fieldName, String viewHolderName, String objectType, int listViewId) {
+        injections.add(new AdapterInjection(fieldName, viewHolderName, objectType, listViewId));
     }
 
     protected String generateInjections() {
         StringBuilder builder = new StringBuilder();
 
-        for(AdapterInjection injection : injections) {
+        for (AdapterInjection injection : injections) {
             String injectionCode = INJECTION_TEMPLATE
                     .replace(FIELD_NAME, injection.getFieldName())
                     .replace(VIEW_HOLDER_NAME, injection.getViewHolderName())
-                    .replace(OBJECT_TYPE, injection.getObjectType());
+                    .replace(OBJECT_TYPE, injection.getObjectType())
+                    .replace(LIST_VIEW_NAME, injection.getFieldName() + LIST_VIEW_SUFIX)
+                    .replace(LIST_VIEW_ID, String.valueOf(injection.getListViewId()));
 
             builder.append(injectionCode);
         }
 
         return builder.toString();
     }
+
 
     public String createInjectAdapterImplementation() {
         String template = Templates.getInstance().read(ADAPTER_INJECTOR_TEMPLATE_PATH);

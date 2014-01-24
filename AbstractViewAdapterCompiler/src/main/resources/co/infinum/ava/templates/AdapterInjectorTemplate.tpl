@@ -1,5 +1,6 @@
 package ${packageName};
 
+import android.widget.ListView;
 import java.util.ArrayList;
 import co.infinum.ava.AbstractViewAdapter;
 

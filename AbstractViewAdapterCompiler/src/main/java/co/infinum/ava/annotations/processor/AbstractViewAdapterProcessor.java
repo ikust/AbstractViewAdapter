@@ -171,8 +171,11 @@ public class AbstractViewAdapterProcessor extends AbstractProcessor {
             String adapterFieldName = element.toString();
             String objectType = JavaLangUtils.getGenericType(element);
 
+            InjectList annotation = element.getAnnotation(InjectList.class);
+            int viewResId = annotation.value();
+
             AdapterInjectorCreator injectorCreator = adapterInjectorMap.get(injectorClassName);
-            injectorCreator.addInjection(adapterFieldName, objectType + CLASS_NAME_SUFIX, objectType);
+            injectorCreator.addInjection(adapterFieldName, objectType + CLASS_NAME_SUFIX, objectType, viewResId);
         }
 
         return adapterInjectorMap;

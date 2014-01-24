@@ -20,11 +20,17 @@ public class AdapterInjection {
      */
     private String objectType;
 
+    /**
+     * Resource ID of the listView to inject the Adapter to.
+     */
+    private int listViewId;
 
-    public AdapterInjection(String fieldName, String viewHolderName, String objectType) {
+
+    public AdapterInjection(String fieldName, String viewHolderName, String objectType, int listViewId) {
         this.fieldName = fieldName;
         this.viewHolderName = viewHolderName;
         this.objectType = objectType;
+        this.listViewId = listViewId;
     }
 
     public String getFieldName() {
@@ -38,4 +44,6 @@ public class AdapterInjection {
     public String getObjectType() {
         return objectType;
     }
+
+    public int getListViewId() { return listViewId; }
 }
