@@ -21,6 +21,7 @@ public class Account {
 
     protected Bitmap icon;
 
+    @ListView(R.id.balance)
     public double getAvailableAmount() {
         return availableAmount;
     }
@@ -29,6 +30,7 @@ public class Account {
         this.availableAmount = availableAmount;
     }
 
+    @ListView(R.id.image)
     public Bitmap getIcon() {
         return icon;
     }
@@ -46,6 +48,7 @@ public class Account {
         this.name = name;
     }
 
+    @ListView(R.id.accountNumber)
     public String getNumber() {
         return number;
     }
