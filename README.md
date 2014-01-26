@@ -31,5 +31,6 @@ List adapter "injection" library which uses annotation processing to generate co
 	}
 ```
 	
-For documentation and additional information see the Wiki.
+For documentation and additional information see the [Wiki][1].
 
+[1]: https://github.com/ikust/AbstractViewAdapter/wiki
