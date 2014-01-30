@@ -77,6 +77,22 @@ public class AbstractViewAdapter<T> extends ArrayAdapter<T> {
         }
     }
 
+    public static void injectAdapters(Object object, View rootView) {
+        String injectorClassName = object.getClass().getName() + INJECTOR_CLASS_NAME_SUFIX;
+
+        try {
+            invoke(Class.forName(injectorClassName).newInstance(), INJECTOR_METHOD_NAME, object, rootView);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public static Object invoke(Object object, String methodName, Object... args) throws Exception {
         Class[] parameterTypes = new Class[args.length];
         Exception runtimeException = new Exception("Problem with dynamic invocation of method '" + methodName + "'");

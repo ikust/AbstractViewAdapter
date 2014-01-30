@@ -44,6 +44,8 @@ public class AbstractViewAdapterProcessor extends AbstractProcessor {
 
     protected static final String BITMAP_TYPE = "android.graphics.Bitmap";
 
+    protected static final String ACTIVITY_TYPE = "android.app.Activity";
+
     /**
      * Used to generate source files.
      */
@@ -95,7 +97,7 @@ public class AbstractViewAdapterProcessor extends AbstractProcessor {
         }
 
         for (Element element : env.getElementsAnnotatedWith(ListView.class)) {
-            if(element.getKind() != ElementKind.METHOD) {
+            if (element.getKind() != ElementKind.METHOD) {
                 //TODO throw exception
             }
 
@@ -117,12 +119,12 @@ public class AbstractViewAdapterProcessor extends AbstractProcessor {
 
             ViewHolderCreator creator = adapterMap.get(className);
 
-            if(creator == null) {
+            if (creator == null) {
                 //TODO throw exception
                 processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "no class creator defined");
             }
 
-            switch(returnType) {
+            switch (returnType) {
                 case STRING_TYPE:
                     creator.addField(ViewHolderFieldType.TEXT, viewResId, methodName);
                     break;
@@ -143,11 +145,11 @@ public class AbstractViewAdapterProcessor extends AbstractProcessor {
 
         for (Element element : env.getElementsAnnotatedWith(InjectList.class)) {
 
-            if(element.getKind() != ElementKind.FIELD) {
+            if (element.getKind() != ElementKind.FIELD) {
                 processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "Element '" + element.toString() + "' is not a FIELD.");
             }
 
-            if(element.getModifiers().contains(Modifier.PROTECTED) ||
+            if (element.getModifiers().contains(Modifier.PROTECTED) ||
                     element.getModifiers().contains(Modifier.PRIVATE)) {
                 processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "Element '" + element + "' is declared PROTECTED or PRIVATE. Fields annotated with @InjectView can't be declared PROTECTED or PRIVATE");
             }
@@ -158,13 +160,14 @@ public class AbstractViewAdapterProcessor extends AbstractProcessor {
             String injectorClassName = parentClassName + INJECTOR_CLASS_NAME_SUFIX;
 
 
-            if(!adapterInjectorMap.containsKey(injectorClassName)) {
+            if (!adapterInjectorMap.containsKey(injectorClassName)) {
                 String injectorClassSimpleName = parentClass.getSimpleName().toString() + INJECTOR_CLASS_NAME_SUFIX;
 
                 AdapterInjectorCreator injectorCreator = new AdapterInjectorCreator();
                 injectorCreator.setPackageName(JavaLangUtils.getPackage(parentClass));
                 injectorCreator.setClassName(injectorClassSimpleName);
                 injectorCreator.setAdapterClassName(parentClassName);
+                injectorCreator.setInjectingIntoActivity(JavaLangUtils.checkIfExtends(parentClass, ACTIVITY_TYPE));
                 adapterInjectorMap.put(injectorClassName, injectorCreator);
             }
 
@@ -207,7 +210,7 @@ public class AbstractViewAdapterProcessor extends AbstractProcessor {
     }
 
     private void generateAdapterInjectorSourceFiles(Map<String, AdapterInjectorCreator> adapterInjectorMap) {
-        for(String className : adapterInjectorMap.keySet()) {
+        for (String className : adapterInjectorMap.keySet()) {
             try {
                 processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "Processing injector: " + className);
 
@@ -217,8 +220,9 @@ public class AbstractViewAdapterProcessor extends AbstractProcessor {
                 writer.write(adapterInjectorMap.get(className).createInjectAdapterImplementation());
                 writer.flush();
                 writer.close();
-            } catch(IOException e) {
-                e.printStackTrace();;
+            } catch (IOException e) {
+                e.printStackTrace();
+                ;
             }
         }
 

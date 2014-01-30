@@ -7,6 +7,7 @@ import java.util.ArrayList;
  * ViewHolder implementations to fields in activities.
  * <p/>
  * TODO: dodat podršku i za fragmente - na isti način kao butterknife
+ * -> izazov je kako provjerit jel extenda activity
  * <p/>
  * Created by ivan on 13/01/14.
  */
@@ -14,15 +15,27 @@ public class AdapterInjectorCreator {
 
     protected static final String ADAPTER_INJECTOR_TEMPLATE_PATH = "/co/infinum/ava/templates/AdapterInjectorTemplate.tpl";
 
-    protected static final String INJECTION_TEMPLATE = "\t\tactivity.${fieldName} = new AbstractViewAdapter(activity, ${viewHolderName}.FACTORY, new ArrayList<${objectType}>());\n" +
+    protected static final String ACTIVITY_PARAMS_TEMPLATE = "${adapterClassName} activity";
+
+    protected static final String OBJECT_PARAMS_TEMPLATE = "${adapterClassName} object, View viewRoot";
+
+    protected static final String ACTIVITY_INJECTION_TEMPLATE = "\t\tactivity.${fieldName} = new AbstractViewAdapter(activity, ${viewHolderName}.FACTORY, new ArrayList<${objectType}>());\n" +
             "\t\tListView ${listViewName} = (ListView) activity.findViewById(${listViewId});\n" +
             "\t\t${listViewName}.setAdapter(activity.${fieldName});\n";
+
+    protected static final String OBJECT_INJECTION_TEMPLATE = "\t\tobject.${fieldName} = new AbstractViewAdapter(viewRoot.getContext(), ${viewHolderName}.FACTORY, new ArrayList<${objectType}());\n" +
+            "\t\tListView ${listViewName} = (ListView) viewRoot.findViewByid({${listViewId});\n" +
+            "\t\t${listViewName}.setAdapter(object.${fieldName})\n";
 
     protected static final String PACKAGE_NAME = "${packageName}";
 
     protected static final String CLASS_NAME = "${className}";
 
+    protected static final String INJECTION_PARAMS = "${injectionParams}";
+
     protected static final String ADAPTER_CLASS_NAME = "${adapterClassName}";
+
+    protected static final String VIEW_ROOT = "${viewRoot}";
 
     protected static final String INJECTION_CODE = "${injectionCode}";
 
@@ -56,7 +69,12 @@ public class AdapterInjectorCreator {
      */
     protected String adapterClassName;
 
-    protected int listViewId;
+    /**
+     * Is the class that contains the adapter field an Activity (does it extend Activity class).
+     * Depending on this flag, injection code for either activity or more general code for any type
+     * of object will be generated.
+     */
+    protected boolean injectingIntoActivity;
 
     protected ArrayList<AdapterInjection> injections = new ArrayList<AdapterInjection>();
 
@@ -88,15 +106,46 @@ public class AdapterInjectorCreator {
         this.adapterClassName = adapterClassName;
     }
 
+    public boolean isInjectingIntoActivity() {
+        return injectingIntoActivity;
+    }
+
+    public void setInjectingIntoActivity(boolean injectingIntoActivity) {
+        this.injectingIntoActivity = injectingIntoActivity;
+    }
+
     public void addInjection(String fieldName, String viewHolderName, String objectType, int listViewId) {
         injections.add(new AdapterInjection(fieldName, viewHolderName, objectType, listViewId));
+    }
+
+    protected String generateParams() {
+        String paramsInjectionTemplate;
+
+        if(injectingIntoActivity) {
+            paramsInjectionTemplate = ACTIVITY_PARAMS_TEMPLATE;
+        } else {
+            paramsInjectionTemplate = OBJECT_INJECTION_TEMPLATE;
+        }
+
+        String paramsInjectionCode = paramsInjectionTemplate
+                .replace(ADAPTER_CLASS_NAME, adapterClassName);
+
+        return paramsInjectionCode;
     }
 
     protected String generateInjections() {
         StringBuilder builder = new StringBuilder();
 
         for (AdapterInjection injection : injections) {
-            String injectionCode = INJECTION_TEMPLATE
+            String injectionTemplate;
+
+            if(injectingIntoActivity) {
+                injectionTemplate = ACTIVITY_INJECTION_TEMPLATE;
+            } else {
+                injectionTemplate = OBJECT_INJECTION_TEMPLATE;
+            }
+
+            String injectionCode = injectionTemplate
                     .replace(FIELD_NAME, injection.getFieldName())
                     .replace(VIEW_HOLDER_NAME, injection.getViewHolderName())
                     .replace(OBJECT_TYPE, injection.getObjectType())
@@ -117,6 +166,7 @@ public class AdapterInjectorCreator {
         template = template.replace(CLASS_NAME, className);
         template = template.replace(ADAPTER_CLASS_NAME, adapterClassName);
 
+        template = template.replace(INJECTION_PARAMS, generateParams());
         template = template.replace(INJECTION_CODE, generateInjections());
 
         return template;
