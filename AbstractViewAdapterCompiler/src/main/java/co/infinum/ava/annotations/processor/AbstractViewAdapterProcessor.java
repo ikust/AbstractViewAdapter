@@ -31,6 +31,9 @@ import co.infinum.ava.annotations.processor.tools.ViewHolderFieldType;
 
 /**
  * Created by ivan on 06/01/14.
+ *
+ * TODO doesn't work for interface types
+ * TODO support for onItemClick listener
  */
 @SupportedAnnotationTypes({"co.infinum.ava.annotations.InjectList", "co.infinum.ava.annotations.ListLayout", "co.infinum.ava.annotations.ListView"})
 @SupportedSourceVersion(SourceVersion.RELEASE_7)

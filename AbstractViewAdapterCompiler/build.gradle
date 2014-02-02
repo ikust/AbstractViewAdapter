@@ -16,7 +16,7 @@ repositories {
     mavenCentral()
 }
 
-
+//TODO update dependencies to use exported API .aar so the source dir doesn't have to be "hacked"
 sourceSets {
     main {
         java {
