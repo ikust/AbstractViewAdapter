@@ -7,9 +7,11 @@ buildscript {
     }
 }
 apply plugin: 'android-library'
+apply plugin: 'maven'
 
 repositories {
     mavenCentral()
+    maven { url '../export' }
 }
 
 android {
@@ -20,7 +22,7 @@ android {
         minSdkVersion 7
         targetSdkVersion 16
         versionCode 1
-        versionName "1.0"
+        versionName "0.1.0"
     }
 
     compileOptions {
@@ -35,4 +37,21 @@ android {
 
 dependencies {
 
+}
+
+def coreAarFile = file('build/libs/AbstractViewAdapterAPI.aar')
+
+artifacts {
+    archives coreAarFile
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: "./../export")
+            pom.groupId = 'co.infinum.ava'
+            pom.artifactId = 'abstractviewadapter'
+            pom.version = '0.1.0'
+        }
+    }
 }

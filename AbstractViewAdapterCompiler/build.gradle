@@ -10,6 +10,7 @@ buildscript {
 }
 
 apply plugin: 'java'
+apply plugin: 'maven'
 
 repositories {
     mavenCentral()
@@ -28,4 +29,23 @@ sourceSets {
 
 dependencies {
 
+}
+
+task coreLibJar(type: Jar) {
+    from fileTree(dir: 'build/classes/release').matching { include 'co/infinum/ava/**' }
+}
+
+artifacts {
+    archives coreLibJar
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: "./../export")
+            pom.groupId = 'co.infinum.ava'
+            pom.artifactId = 'abstractviewadapter-compiler'
+            pom.version = '0.1.0'
+        }
+    }
 }

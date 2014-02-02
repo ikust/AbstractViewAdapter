@@ -30,3 +30,6 @@ proguard/
 	
 # Gradle 
 .gradle/
+
+#Maven export dir
+export/
