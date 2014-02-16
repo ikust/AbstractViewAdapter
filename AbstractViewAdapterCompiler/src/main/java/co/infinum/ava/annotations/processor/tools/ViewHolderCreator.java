@@ -4,8 +4,9 @@ import java.util.ArrayList;
 
 /**
  * This class is used to create ViewHolder implementations (from template) that will be "injected".
- *
- * Created by ivan on 06/01/14.
+ * <p>
+ * ViewHolder can display two types of data: strings and images. Any other object or primitive type
+ * will be cast to string by using String.valueOf() and treated as String type.
  */
 public class ViewHolderCreator {
 
@@ -19,10 +20,9 @@ public class ViewHolderCreator {
 
     protected static final String IMAGE_FIELD_INIT_TEMPLATE = "\t\t${fieldName} = (ImageView) viewLayout.findViewById(${viewResId});\n";
 
-    protected static final String TEXT_FIELD_UPDATE_TEMPLATE = "\t\t${fieldName}.setText(item.${objectMethodName}());\n";
+    protected static final String TEXT_FIELD_UPDATE_TEMPLATE = "\t\t${fieldName}.setText(String.valueOf(item.${objectMethodName}()));\n";
 
     protected static final String IMAGE_FIELD_UPDATE_TEMPLATE = "\t\t${fieldName}.setImageBitmap(item.${objectMethodName}());\n";
-
 
     protected static final String PACKAGE_NAME = "${packageName}";
 

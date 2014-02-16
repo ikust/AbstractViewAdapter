@@ -135,7 +135,7 @@ public class AbstractViewAdapterProcessor extends AbstractProcessor {
                     creator.addField(ViewHolderFieldType.IMAGE, viewResId, methodName);
                     break;
                 default:
-                    //TODO throw exception, unsupported return type
+                    creator.addField(ViewHolderFieldType.TEXT, viewResId, methodName);
             }
 
         }
