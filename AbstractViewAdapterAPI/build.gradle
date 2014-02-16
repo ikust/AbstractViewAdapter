@@ -51,7 +51,7 @@ uploadArchives {
             repository(url: "./../export")
             pom.groupId = 'co.infinum.ava'
             pom.artifactId = 'abstractviewadapter'
-            pom.version = '0.1.0'
+            pom.version = '0.1.1'
         }
     }
 }
