@@ -1,10 +1,18 @@
 package co.infinum.ava.annotations.processor.tools;
 
 /**
- *
- * Created by ivan on 06/01/14.
+ * An enum defining possible types of fields that will be defined in ViewHolder and displayed in
+ * ListView items.
  */
 public enum ViewHolderFieldType {
 
-    TEXT, IMAGE
+    /**
+     * Represents String fields.
+     */
+    TEXT,
+
+    /**
+     * Represents Bitmap fields.
+     */
+    IMAGE
 }
