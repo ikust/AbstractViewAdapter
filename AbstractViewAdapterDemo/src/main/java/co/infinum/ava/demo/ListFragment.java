@@ -1,29 +1,30 @@
 package co.infinum.ava.demo;
 
+import android.app.Fragment;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
 import co.infinum.ava.AbstractViewAdapter;
 import co.infinum.ava.annotations.InjectList;
 
-public class MainActivity extends ActionBarActivity {
+/**
+ * Created by ivan on 18/02/14.
+ */
+public class ListFragment extends Fragment {
 
     @InjectList(R.id.list)
     AbstractViewAdapter<Account> abstractViewAdapter;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+    View rootView;
 
-        AbstractViewAdapter.injectAdapters(this);
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        rootView = inflater.inflate(R.layout.fragment_list, null);
+
+        AbstractViewAdapter.injectAdapters(this, rootView);
 
         Account account = new Account();
         account.setAvailableAmount(102.54);
@@ -33,7 +34,6 @@ public class MainActivity extends ActionBarActivity {
 
         abstractViewAdapter.add(account);
 
-
+        return rootView;
     }
-
 }
