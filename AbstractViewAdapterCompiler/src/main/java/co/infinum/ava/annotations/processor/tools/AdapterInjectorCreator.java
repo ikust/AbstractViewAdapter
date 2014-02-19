@@ -5,37 +5,32 @@ import java.util.ArrayList;
 /**
  * This class is used to create helper class that will contain a method for "injecting" generated
  * ViewHolder implementations to fields in activities.
- * <p/>
- * TODO: dodat podršku i za fragmente - na isti način kao butterknife
- * -> izazov je kako provjerit jel extenda activity
- * <p/>
+ *
  * Created by ivan on 13/01/14.
  */
 public class AdapterInjectorCreator {
 
     protected static final String ADAPTER_INJECTOR_TEMPLATE_PATH = "/co/infinum/ava/templates/AdapterInjectorTemplate.tpl";
 
-    protected static final String ACTIVITY_PARAMS_TEMPLATE = "${adapterClassName} activity";
+    protected static final String ACTIVITY_INJECTION_PARAMS = "${adapterClassName} activity";
 
-    protected static final String OBJECT_PARAMS_TEMPLATE = "${adapterClassName} object, View viewRoot";
+    protected static final String OBJECT_INJECTION_PARAMS = "${adapterClassName} object, View viewRoot";
 
     protected static final String ACTIVITY_INJECTION_TEMPLATE = "\t\tactivity.${fieldName} = new AbstractViewAdapter(activity, ${viewHolderName}.FACTORY, new ArrayList<${objectType}>());\n" +
             "\t\tListView ${listViewName} = (ListView) activity.findViewById(${listViewId});\n" +
             "\t\t${listViewName}.setAdapter(activity.${fieldName});\n";
 
-    protected static final String OBJECT_INJECTION_TEMPLATE = "\t\tobject.${fieldName} = new AbstractViewAdapter(viewRoot.getContext(), ${viewHolderName}.FACTORY, new ArrayList<${objectType}());\n" +
-            "\t\tListView ${listViewName} = (ListView) viewRoot.findViewByid({${listViewId});\n" +
-            "\t\t${listViewName}.setAdapter(object.${fieldName})\n";
+    protected static final String OBJECT_INJECTION_TEMPLATE = "\t\tobject.${fieldName} = new AbstractViewAdapter(viewRoot.getContext(), ${viewHolderName}.FACTORY, new ArrayList<${objectType}>());\n" +
+            "\t\tListView ${listViewName} = (ListView) viewRoot.findViewById(${listViewId});\n" +
+            "\t\t${listViewName}.setAdapter(object.${fieldName});\n";
 
     protected static final String PACKAGE_NAME = "${packageName}";
 
     protected static final String CLASS_NAME = "${className}";
 
-    protected static final String INJECTION_PARAMS = "${injectionParams}";
-
     protected static final String ADAPTER_CLASS_NAME = "${adapterClassName}";
 
-    protected static final String VIEW_ROOT = "${viewRoot}";
+    protected static final String INJECTION_PARAMS = "${injectionParams}";
 
     protected static final String INJECTION_CODE = "${injectionCode}";
 
@@ -118,32 +113,19 @@ public class AdapterInjectorCreator {
         injections.add(new AdapterInjection(fieldName, viewHolderName, objectType, listViewId));
     }
 
-    protected String generateParams() {
-        String paramsInjectionTemplate;
+    protected String generateInjectionParams(String injectionParamsTemplate) {
+        StringBuilder builder = new StringBuilder();
 
-        if(injectingIntoActivity) {
-            paramsInjectionTemplate = ACTIVITY_PARAMS_TEMPLATE;
-        } else {
-            paramsInjectionTemplate = OBJECT_INJECTION_TEMPLATE;
-        }
+        String injectionParams = injectionParamsTemplate.replace(ADAPTER_CLASS_NAME, adapterClassName);
+        builder.append(injectionParams);
 
-        String paramsInjectionCode = paramsInjectionTemplate
-                .replace(ADAPTER_CLASS_NAME, adapterClassName);
-
-        return paramsInjectionCode;
+        return builder.toString();
     }
 
-    protected String generateInjections() {
+    protected String generateInjections(String injectionTemplate) {
         StringBuilder builder = new StringBuilder();
 
         for (AdapterInjection injection : injections) {
-            String injectionTemplate;
-
-            if(injectingIntoActivity) {
-                injectionTemplate = ACTIVITY_INJECTION_TEMPLATE;
-            } else {
-                injectionTemplate = OBJECT_INJECTION_TEMPLATE;
-            }
 
             String injectionCode = injectionTemplate
                     .replace(FIELD_NAME, injection.getFieldName())
@@ -158,7 +140,6 @@ public class AdapterInjectorCreator {
         return builder.toString();
     }
 
-
     public String createInjectAdapterImplementation() {
         String template = Templates.getInstance().read(ADAPTER_INJECTOR_TEMPLATE_PATH);
 
@@ -166,8 +147,13 @@ public class AdapterInjectorCreator {
         template = template.replace(CLASS_NAME, className);
         template = template.replace(ADAPTER_CLASS_NAME, adapterClassName);
 
-        template = template.replace(INJECTION_PARAMS, generateParams());
-        template = template.replace(INJECTION_CODE, generateInjections());
+        if(isInjectingIntoActivity()) {
+            template = template.replace(INJECTION_PARAMS, generateInjectionParams(ACTIVITY_INJECTION_PARAMS));
+            template = template.replace(INJECTION_CODE, generateInjections(ACTIVITY_INJECTION_TEMPLATE));
+        } else {
+            template = template.replace(INJECTION_PARAMS, generateInjectionParams(OBJECT_INJECTION_PARAMS));
+            template = template.replace(INJECTION_CODE, generateInjections(OBJECT_INJECTION_TEMPLATE));
+        }
 
         return template;
     }

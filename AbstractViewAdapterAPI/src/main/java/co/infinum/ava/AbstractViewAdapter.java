@@ -6,7 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 
@@ -60,12 +59,13 @@ public class AbstractViewAdapter<T> extends ArrayAdapter<T> {
     }
 
     public static void injectAdapters(Activity activity) {
-        //TODO improve, this is test code
-
         String injectorClassName = activity.getClass().getName() + INJECTOR_CLASS_NAME_SUFIX;
 
         try {
-            invoke(Class.forName(injectorClassName).newInstance(), INJECTOR_METHOD_NAME, activity);
+            Object injectorObject = Class.forName(injectorClassName).newInstance();
+
+            Method method = getActivityInjectMethod(injectorObject, activity);
+            method.invoke(injectorObject, activity);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         } catch (InstantiationException e) {
@@ -81,7 +81,10 @@ public class AbstractViewAdapter<T> extends ArrayAdapter<T> {
         String injectorClassName = object.getClass().getName() + INJECTOR_CLASS_NAME_SUFIX;
 
         try {
-            invoke(Class.forName(injectorClassName).newInstance(), INJECTOR_METHOD_NAME, object, rootView);
+            Object injectorObject = Class.forName(injectorClassName).newInstance();
+
+            Method method = getObjectInjectMethod(injectorObject, object);
+            method.invoke(injectorObject, object, rootView);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         } catch (InstantiationException e) {
@@ -93,35 +96,37 @@ public class AbstractViewAdapter<T> extends ArrayAdapter<T> {
         }
     }
 
-    public static Object invoke(Object object, String methodName, Object... args) throws Exception {
-        Class[] parameterTypes = new Class[args.length];
-        Exception runtimeException = new Exception("Problem with dynamic invocation of method '" + methodName + "'");
-        for (int i = 0; i < args.length; i++) {
-            parameterTypes[i] = args[i].getClass();
-        }
-        try {
-            Method method = object.getClass().getMethod(methodName, parameterTypes);
-            return method.invoke(object, args);
-        } catch (SecurityException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            throw runtimeException;
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-            throw runtimeException;
-        } catch (IllegalArgumentException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            throw runtimeException;
-        } catch (IllegalAccessException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            throw runtimeException;
-        } catch (InvocationTargetException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            throw runtimeException;
-        }
+    /**
+     * Returns method for activity injection.
+     *
+     * @param injectorObject
+     * @param activity
+     * @return
+     * @throws NoSuchMethodException
+     */
+    private static Method getActivityInjectMethod(Object injectorObject, Activity activity) throws NoSuchMethodException {
+        Class[] parameterTypes = new Class[] {
+            activity.getClass()
+        };
+
+        return injectorObject.getClass().getMethod(INJECTOR_METHOD_NAME, parameterTypes);
+    }
+
+    /**
+     * Returns method for object injection.
+     *
+     * @param injectorObject
+     * @param object
+     * @return
+     * @throws NoSuchMethodException
+     */
+    private static Method getObjectInjectMethod(Object injectorObject, Object object) throws NoSuchMethodException {
+        Class[] parameterTypes = new Class[] {
+                object.getClass(),
+                View.class
+        };
+
+        return injectorObject.getClass().getMethod(INJECTOR_METHOD_NAME, parameterTypes);
     }
 
 }
