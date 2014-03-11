@@ -6,7 +6,7 @@ package co.infinum.ava.annotations;
 public @interface OnItemClick {
 
     /**
-     * Resource ID of the ListView to inject the click listener into.
+     * Resource ID of the ListElement to inject the click listener into.
      *
      * @return
      */

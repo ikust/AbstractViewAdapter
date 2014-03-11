@@ -17,12 +17,26 @@ public class AdapterInjectorCreator {
     protected static final String OBJECT_INJECTION_PARAMS = "${adapterClassName} object, View viewRoot";
 
     protected static final String ACTIVITY_INJECTION_TEMPLATE = "\t\tactivity.${fieldName} = new AbstractViewAdapter(activity, ${viewHolderName}.FACTORY, new ArrayList<${objectType}>());\n" +
-            "\t\tListView ${listViewName} = (ListView) activity.findViewById(${listViewId});\n" +
+            "\t\tListElement ${listViewName} = (ListElement) activity.findViewById(${listViewId});\n" +
             "\t\t${listViewName}.setAdapter(activity.${fieldName});\n";
 
+    protected static final String CLICK_LISTENER_ACTIVITY_INJECTION_TEMPLATE = "\t\t${listViewName}.setOnItemClickLIstener(new AdapterView.OnItemClickLIstener() {\n" +
+            "\t\t\t@Override\n" +
+            "\t\t\tpublic void onItemClick(AdapterView<?> parent, VIew view, int position, long id) {\n" +
+            "\t\t\t\t${onClickMethod}(activity.${fieldName}.get(position));\n" +
+            "\t\t\t}\n" +
+            "\t\t\t|);\n";
+
     protected static final String OBJECT_INJECTION_TEMPLATE = "\t\tobject.${fieldName} = new AbstractViewAdapter(viewRoot.getContext(), ${viewHolderName}.FACTORY, new ArrayList<${objectType}>());\n" +
-            "\t\tListView ${listViewName} = (ListView) viewRoot.findViewById(${listViewId});\n" +
+            "\t\tListElement ${listViewName} = (ListElement) viewRoot.findViewById(${listViewId});\n" +
             "\t\t${listViewName}.setAdapter(object.${fieldName});\n";
+
+    protected static final String CLICK_LISTENER_OBJECT_INJECTION_TEMPLATE = "\t\t${listViewName}.setOnItemClickLIstener(new AdapterView.OnItemClickLIstener() {\n" +
+            "\t\t\t@Override\n" +
+            "\t\t\tpublic void onItemClick(AdapterView<?> parent, VIew view, int position, long id) {\n" +
+            "\t\t\t\t${onClickMethod}(object.${fieldName}.get(position));\n" +
+            "\t\t\t}\n" +
+            "\t\t\t|);\n";
 
     protected static final String PACKAGE_NAME = "${packageName}";
 
@@ -44,7 +58,9 @@ public class AdapterInjectorCreator {
 
     protected static final String LIST_VIEW_ID = "${listViewId}";
 
-    protected static final String LIST_VIEW_SUFIX = "ListView";
+    protected static final String ON_CLICK_METHOD = "${onClickMetod}";
+
+    protected static final String LIST_VIEW_SUFIX = "ListElement";
 
 
     /**
@@ -63,6 +79,11 @@ public class AdapterInjectorCreator {
      * "host")
      */
     protected String adapterClassName;
+
+    /**
+     * Name of the method that will handle onItemClick events.
+     */
+    protected String onClickMethodName;
 
     /**
      * Is the class that contains the adapter field an Activity (does it extend Activity class).

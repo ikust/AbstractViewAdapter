@@ -22,8 +22,8 @@ import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
 
 import co.infinum.ava.annotations.InjectList;
+import co.infinum.ava.annotations.ListElement;
 import co.infinum.ava.annotations.ListLayout;
-import co.infinum.ava.annotations.ListView;
 import co.infinum.ava.annotations.processor.tools.AdapterInjectorCreator;
 import co.infinum.ava.annotations.processor.tools.JavaLangUtils;
 import co.infinum.ava.annotations.processor.tools.ViewHolderCreator;
@@ -35,7 +35,7 @@ import co.infinum.ava.annotations.processor.tools.ViewHolderFieldType;
  * TODO doesn't work for interface types
  * TODO support for onItemClick listener
  */
-@SupportedAnnotationTypes({"co.infinum.ava.annotations.InjectList", "co.infinum.ava.annotations.ListLayout", "co.infinum.ava.annotations.ListView"})
+@SupportedAnnotationTypes({"co.infinum.ava.annotations.InjectList", "co.infinum.ava.annotations.ListLayout", "co.infinum.ava.annotations.ListElement"})
 @SupportedSourceVersion(SourceVersion.RELEASE_7)
 public class AbstractViewAdapterProcessor extends AbstractProcessor {
 
@@ -99,7 +99,7 @@ public class AbstractViewAdapterProcessor extends AbstractProcessor {
             adapterMap.put(className, creator);
         }
 
-        for (Element element : env.getElementsAnnotatedWith(ListView.class)) {
+        for (Element element : env.getElementsAnnotatedWith(ListElement.class)) {
             if (element.getKind() != ElementKind.METHOD) {
                 //TODO throw exception
             }
@@ -115,7 +115,7 @@ public class AbstractViewAdapterProcessor extends AbstractProcessor {
             TypeElement parentType = (TypeElement) element.getEnclosingElement();
             String className = parentType.getQualifiedName() + CLASS_NAME_SUFIX;
 
-            ListView annotation = element.getAnnotation(ListView.class);
+            ListElement annotation = element.getAnnotation(ListElement.class);
             int viewResId = annotation.value();
 
             processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "MethodName: " + methodName);

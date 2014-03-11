@@ -6,7 +6,7 @@ package co.infinum.ava.annotations;
 public @interface InjectList {
 
     /**
-     * Resource ID of the ListView to inject the adapter into.
+     * Resource ID of the ListElement to inject the adapter into.
      *
      * @return
      */
