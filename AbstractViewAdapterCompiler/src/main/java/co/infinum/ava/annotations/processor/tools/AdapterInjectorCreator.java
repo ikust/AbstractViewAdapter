@@ -17,7 +17,7 @@ public class AdapterInjectorCreator {
     protected static final String OBJECT_INJECTION_PARAMS = "${adapterClassName} object, View viewRoot";
 
     protected static final String ACTIVITY_INJECTION_TEMPLATE = "\t\tactivity.${fieldName} = new AbstractViewAdapter(activity, ${viewHolderName}.FACTORY, new ArrayList<${objectType}>());\n" +
-            "\t\tListElement ${listViewName} = (ListElement) activity.findViewById(${listViewId});\n" +
+            "\t\tListView ${listViewName} = (ListView) activity.findViewById(${listViewId});\n" +
             "\t\t${listViewName}.setAdapter(activity.${fieldName});\n";
 
     protected static final String CLICK_LISTENER_ACTIVITY_INJECTION_TEMPLATE = "\t\t${listViewName}.setOnItemClickLIstener(new AdapterView.OnItemClickLIstener() {\n" +
@@ -28,7 +28,7 @@ public class AdapterInjectorCreator {
             "\t\t\t|);\n";
 
     protected static final String OBJECT_INJECTION_TEMPLATE = "\t\tobject.${fieldName} = new AbstractViewAdapter(viewRoot.getContext(), ${viewHolderName}.FACTORY, new ArrayList<${objectType}>());\n" +
-            "\t\tListElement ${listViewName} = (ListElement) viewRoot.findViewById(${listViewId});\n" +
+            "\t\tListView ${listViewName} = (ListView) viewRoot.findViewById(${listViewId});\n" +
             "\t\t${listViewName}.setAdapter(object.${fieldName});\n";
 
     protected static final String CLICK_LISTENER_OBJECT_INJECTION_TEMPLATE = "\t\t${listViewName}.setOnItemClickLIstener(new AdapterView.OnItemClickLIstener() {\n" +
@@ -60,7 +60,7 @@ public class AdapterInjectorCreator {
 
     protected static final String ON_CLICK_METHOD = "${onClickMetod}";
 
-    protected static final String LIST_VIEW_SUFIX = "ListElement";
+    protected static final String LIST_VIEW_SUFIX = "ListView";
 
 
     /**

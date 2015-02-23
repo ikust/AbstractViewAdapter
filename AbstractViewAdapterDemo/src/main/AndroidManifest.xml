@@ -11,6 +11,7 @@
             android:name="co.infinum.ava.demo.MainActivity"
             android:label="@string/app_name">
 
+
         </activity>
 
         <activity
@@ -22,6 +23,7 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
     </application>
 
