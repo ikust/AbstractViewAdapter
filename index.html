@@ -1,0 +1,91 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Abstractviewadapter by ikust</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Abstractviewadapter</h1>
+        <p>Simple List adapter injection library for Android.</p>
+
+        <p class="view"><a href="https://github.com/ikust/AbstractViewAdapter">View the Project on GitHub <small>ikust/AbstractViewAdapter</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/ikust/AbstractViewAdapter/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/ikust/AbstractViewAdapter/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/ikust/AbstractViewAdapter">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>
+<a id="abstractviewadapter" class="anchor" href="#abstractviewadapter" aria-hidden="true"><span class="octicon octicon-link"></span></a>AbstractViewAdapter</h1>
+
+<p>List adapter "injection" library which uses annotation processing to generate code that implements a ListView Adapter and assignes it to one of your ListViews. Also provides means to implement a ViewHolder pattern. </p>
+
+<div class="highlight highlight-java"><pre>@ListLayout(<span class="pl-stj">R</span><span class="pl-k">.</span>layout<span class="pl-k">.</span>listitem_account)
+<span class="pl-s">public</span> <span class="pl-s">class</span> <span class="pl-en">Account</span> {
+
+  <span class="pl-s">protected</span> <span class="pl-stj">String</span> number;
+  <span class="pl-s">protected</span> <span class="pl-stj">Bitmap</span> icon;
+
+  <span class="pl-st">@ListView</span>(<span class="pl-stj">R</span><span class="pl-k">.</span>id<span class="pl-k">.</span>image) <span class="pl-s">public</span> <span class="pl-stj">Bitmap</span> <span class="pl-en">getIcon</span>() {
+    <span class="pl-k">return</span> icon;
+  }
+
+  <span class="pl-st">@ListView</span>(<span class="pl-stj">R</span><span class="pl-k">.</span>id<span class="pl-k">.</span>accountNumber) <span class="pl-s">public</span> <span class="pl-stj">String</span> <span class="pl-en">getNumber</span>() {
+    <span class="pl-k">return</span> number;
+  }
+}
+
+<span class="pl-s">public</span> <span class="pl-s">class</span> <span class="pl-en">MainActivity</span> <span class="pl-s">extends</span> <span class="pl-e">ActionBarActivity</span> {
+  <span class="pl-st">@InjectList</span>(<span class="pl-stj">R</span><span class="pl-k">.</span>id<span class="pl-k">.</span>list) <span class="pl-st">AbstractViewAdapter&lt;<span class="pl-stj">Account</span>&gt;</span> adapter;
+
+  <span class="pl-st">@Override</span> <span class="pl-s">protected</span> <span class="pl-st">void</span> <span class="pl-en">onCreate</span>(<span class="pl-stj">Bundle</span> <span class="pl-v">savedInstanceState</span>) {
+    <span class="pl-v">super</span><span class="pl-k">.</span>onCreate(savedInstanceState);
+    setContentView(<span class="pl-stj">R</span><span class="pl-k">.</span>layout<span class="pl-k">.</span>activity_main);
+
+    <span class="pl-stj">AbstractViewAdapter</span><span class="pl-k">.</span>injectAdapters(<span class="pl-v">this</span>);
+    <span class="pl-c">//TODO use adapter to add items to the list</span>
+  }
+}  </pre></div>
+
+<p>For documentation and additional information see the <a href="https://github.com/ikust/AbstractViewAdapter/wiki">Wiki</a>.</p>
+
+<h1>
+<a id="license" class="anchor" href="#license" aria-hidden="true"><span class="octicon octicon-link"></span></a>License</h1>
+
+<pre><code>Copyright 2014 Ivan Kušt
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+</code></pre>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/ikust">ikust</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
