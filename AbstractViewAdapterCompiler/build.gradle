@@ -5,12 +5,13 @@ buildscript {
 
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.9.+'
+        classpath 'com.android.tools.build:gradle:1.0.1'
     }
 }
 
 apply plugin: 'java'
 apply plugin: 'maven'
+apply plugin: 'signing'
 
 repositories {
     mavenCentral()
@@ -31,21 +32,77 @@ dependencies {
 
 }
 
-task coreLibJar(type: Jar) {
-    from fileTree(dir: 'build/classes/release').matching { include 'co/infinum/ava/**' }
+group = "co.infinum"
+archivesBaseName = "abstractviewadapter-compiler"
+version = "0.1.0"
+
+configurations {
+    archives {
+        extendsFrom configurations.default
+    }
+}
+
+task javadocJar(type: Jar) {
+    classifier = 'javadoc'
+    from javadoc
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
 }
 
 artifacts {
-    archives coreLibJar
+    archives javadocJar, sourcesJar
+}
+
+signing {
+    sign configurations.archives
 }
 
 uploadArchives {
     repositories {
         mavenDeployer {
-            repository(url: "./../export")
-            pom.groupId = 'co.infinum.ava'
-            pom.artifactId = 'abstractviewadapter-compiler'
-            pom.version = '0.1.1'
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            pom.project {
+                name 'Abstract View Adapter Compiler'
+                packaging 'jar'
+                artifactId 'abstractviewadapter-compiler'
+                description 'Simple List adapter injection library for Android - compiler.'
+                url 'http://ikust.github.io/AbstractViewAdapter/'
+
+                scm {
+                    connection 'scm:git:git@github.com:ikust/AbstractViewAdapter.git'
+                    developerConnection 'scm:git:git@github.com:ikust/AbstractViewAdapter.git'
+                    url 'git@github.com:ikust/AbstractViewAdapter.git'
+                }
+
+                licenses {
+                    license {
+                        name 'The Apache License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id 'ikust'
+                        name 'Ivan Kušt'
+                        email 'ivan@infinum.co'
+                        organization 'Infinum'
+                        organizationUrl 'https://www.infinum.co'
+                    }
+                }
+            }
         }
     }
 }

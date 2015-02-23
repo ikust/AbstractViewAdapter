@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        jar="/Developer/android-sdk/extras/android/m2repository/com/android/support/support-annotations/21.0.2/support-annotations-21.0.2.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="99373741f99a0556ee293c41e8faa1ca3ae8a4e6">
+        <dex dex="/Users/ivan/AndroidStudioProjects/AbstractViewAdapter/AbstractViewAdapterDemo/build/intermediates/pre-dexed/debug/support-annotations-21.0.2-3f56af937e7dd876680eba031275e127017aeafa.jar" />
+    </item>
+    <item
+        jar="/Users/ivan/AndroidStudioProjects/AbstractViewAdapter/AbstractViewAdapterDemo/build/intermediates/exploded-aar/AbstractViewAdapter/AbstractViewAdapterAPI/unspecified/classes.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="10b3468d1853b3307354163c6709e69f3f1dec6c">
+        <dex dex="/Users/ivan/AndroidStudioProjects/AbstractViewAdapter/AbstractViewAdapterDemo/build/intermediates/pre-dexed/debug/classes-f5ffd6fc1cf2e1bf7620b2f13039ace88ec35068.jar" />
+    </item>
+    <item
+        jar="/Users/ivan/AndroidStudioProjects/AbstractViewAdapter/AbstractViewAdapterDemo/build/intermediates/exploded-aar/com.android.support/appcompat-v7/21.0.2/classes.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="7ae2d38807a43b2f2185ff4089a92c790b579e54">
+        <dex dex="/Users/ivan/AndroidStudioProjects/AbstractViewAdapter/AbstractViewAdapterDemo/build/intermediates/pre-dexed/debug/classes-0e11dde29a19aa848892a5f84b988e0c18c4e2ba.jar" />
+    </item>
+    <item
+        jar="/Users/ivan/AndroidStudioProjects/AbstractViewAdapter/AbstractViewAdapterDemo/build/intermediates/exploded-aar/com.android.support/support-v4/21.0.2/classes.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="d1bf02de1c56d942e7a9d093b8610ba1ef4128e3">
+        <dex dex="/Users/ivan/AndroidStudioProjects/AbstractViewAdapter/AbstractViewAdapterDemo/build/intermediates/pre-dexed/debug/classes-22e074fb277b51473b8df5636634bcd972b1d97d.jar" />
+    </item>
+    <item
+        jar="/Users/ivan/AndroidStudioProjects/AbstractViewAdapter/AbstractViewAdapterDemo/build/intermediates/exploded-aar/com.android.support/support-v4/21.0.2/libs/internal_impl-21.0.2.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="962e8b12569c56dbdcf8367eb4eac8bb129cd18f">
+        <dex dex="/Users/ivan/AndroidStudioProjects/AbstractViewAdapter/AbstractViewAdapterDemo/build/intermediates/pre-dexed/debug/internal_impl-21.0.2-3348203977b0b3a603db74bba06160fbce4c0f6e.jar" />
+    </item>
+
+</items>

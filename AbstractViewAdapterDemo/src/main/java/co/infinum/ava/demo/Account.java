@@ -3,15 +3,14 @@ package co.infinum.ava.demo;
 
 import android.graphics.Bitmap;
 
+import co.infinum.ava.annotations.ListElement;
 import co.infinum.ava.annotations.ListLayout;
-import co.infinum.ava.annotations.ListView;
 
 /**
  * Created by ivan on 12/17/13.
  */
 @ListLayout(R.layout.listitem_account)
 public class Account {
-
 
     protected String name;
 
@@ -21,7 +20,7 @@ public class Account {
 
     protected Bitmap icon;
 
-    @ListView(R.id.balance)
+    @ListElement(R.id.balance)
     public double getAvailableAmount() {
         return availableAmount;
     }
@@ -30,7 +29,7 @@ public class Account {
         this.availableAmount = availableAmount;
     }
 
-    @ListView(R.id.image)
+    @ListElement(R.id.image)
     public Bitmap getIcon() {
         return icon;
     }
@@ -39,7 +38,7 @@ public class Account {
         this.icon = icon;
     }
 
-    @ListView(R.id.accountName)
+    @ListElement(R.id.accountName)
     public String getName() {
         return name;
     }
@@ -48,7 +47,7 @@ public class Account {
         this.name = name;
     }
 
-    @ListView(R.id.accountNumber)
+    @ListElement(R.id.accountNumber)
     public String getNumber() {
         return number;
     }

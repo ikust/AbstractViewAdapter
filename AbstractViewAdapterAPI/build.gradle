@@ -3,11 +3,12 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.9.+'
+        classpath 'com.android.tools.build:gradle:1.0.1'
     }
 }
-apply plugin: 'android-library'
+apply plugin: 'com.android.library'
 apply plugin: 'maven'
+apply plugin: 'signing'
 
 repositories {
     mavenCentral()
@@ -16,7 +17,7 @@ repositories {
 
 android {
     compileSdkVersion 19
-    buildToolsVersion "19.0.0"
+    buildToolsVersion "21.1.2"
 
     defaultConfig {
         minSdkVersion 7
@@ -32,7 +33,7 @@ android {
 
     buildTypes {
         release {
-            runProguard false
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
     }
@@ -42,19 +43,88 @@ dependencies {
 
 }
 
-def coreAarFile = file('build/libs/AbstractViewAdapterAPI.aar')
+group = "co.infinum"
+archivesBaseName = "abstractviewadapter"
+version = "0.1.0"
+
+configurations {
+    archives {
+        extendsFrom configurations.default
+    }
+}
+
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier = 'sources'
+}
+
+task javadoc(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+
+    options {
+        encoding "utf-8"
+        links "http://docs.oracle.com/javase/7/docs/api/"
+        linksOffline "http://d.android.com/reference","${android.sdkDirectory}/docs/reference"
+    }
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
 
 artifacts {
-    archives coreAarFile
+    archives javadocJar, sourcesJar
+}
+
+signing {
+    sign configurations.archives
 }
 
 uploadArchives {
     repositories {
         mavenDeployer {
-            repository(url: "./../export")
-            pom.groupId = 'co.infinum.ava'
-            pom.artifactId = 'abstractviewadapter'
-            pom.version = '0.1.1'
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            pom.project {
+                name 'Abstract View Adapter'
+                packaging 'aar'
+                artifactId 'abstractviewadapter'
+                description 'Simple List adapter injection library for Android.'
+                url 'http://ikust.github.io/AbstractViewAdapter/'
+
+                scm {
+                    connection 'scm:git:git@github.com:ikust/AbstractViewAdapter.git'
+                    developerConnection 'scm:git:git@github.com:ikust/AbstractViewAdapter.git'
+                    url 'git@github.com:ikust/AbstractViewAdapter.git'
+                }
+
+                licenses {
+                    license {
+                        name 'The Apache License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id 'ikust'
+                        name 'Ivan Kušt'
+                        email 'ivan@infinum.co'
+                        organization 'Infinum'
+                        organizationUrl 'https://www.infinum.co'
+                    }
+                }
+            }
         }
     }
 }
